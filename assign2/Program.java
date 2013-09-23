@@ -131,15 +131,13 @@ public class Program
                             }
                         }
 
-                        // Print statistics table
-                        System.out.printf("\n");
-                        camera.print();
-                        blob.thresh.print();
-                        Camera.statsTitles();
-                        for (int i = 0; i < stats.length; ++i)
-                            stats[i].print(names[i]);
-                    }
-                }
+                // Print statistics table
+                System.out.printf("\n");
+                camera.print();
+                blob.thresh.print();
+                Camera.statsTitles();
+                for (int i = 0; i < stats.length; ++i)
+                    stats[i].print(names[i]);
             }
         }
     }
