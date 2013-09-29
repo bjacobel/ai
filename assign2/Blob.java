@@ -5,6 +5,35 @@ import java.util.Vector;
 
 public class Blob
 {
+    // ****
+    // Point class
+    // I've chosen to implement this myself rather than using a class like java.awt.Point
+    // because I'd like to be able to handle the weight of the point internally within the Point class
+    // ****
+    public class Point {
+        private double weight;
+        private double x;
+        private double y;
+
+        public Point(double weight, double x, double y) {
+            this.weight = weight;
+            this.x = x;
+            this.y = y;
+        }
+
+        public double weight(){
+            return this.weight;
+        }
+
+        public double x(){
+            return this.x;
+        }
+
+        public double y(){
+            return this.y;
+        }
+    }
+
     // *****************
     // *               *
     // *  Blob Result  *
@@ -12,15 +41,29 @@ public class Blob
     // *****************
     public class Result
     {
+        public Stack<Point> blob_stack = new Stack<Point>();
+
         // effect   Add one pixel to blob of specified weight and position
         public void add(double w, double x, double y)
         {
+            Point newPoint = new Point(w, x, y);
+            blob_stack.push(newPoint);
         }
 
         // returns  Blob area
         public double area()
         {
-            return 0;
+            // Need to pop off the stack to calculate area, but don't want to destroy data
+            Stack<Point> stack_copy = blob_stack;
+
+            double area = 0;
+
+            while (!stack_copy.empty()){
+                point = stack_copy.pop();
+                area += point.weight();
+            }
+
+            return area;
         }
 
         // returns  x coordinate of center of mass
@@ -153,6 +196,9 @@ public class Blob
     // Blobs smaller (lighter) than this are discarded.
     public double minArea = 8;
 
+    // boolean array to track pixel visitation
+    public Vector<Vector<Boolean>> mark = new Vector<Vector<Boolean>>();
+
     // ***********************
     // *                     *
     // *  Run Blob Analysis  *
@@ -163,6 +209,31 @@ public class Blob
     // This is where all connectivity analysis is done. Use above parameters.
     public void run(Camera.Image img)
     {
+        results.clear(); // per Bill's email, we must clear the results vector to prevent stats bugs
+
+
+        // initialize mark array 2 larger than the image (for 1 px wide border)
+        int expanded_height = img.height() + 2;
+        int expanded_width = img.width() + 2;
+
+        for(int j = 0; j < expanded_height; j++) {
+            mark.insertElementAt(new Vector<Boolean>(), j);
+            
+            for(int i = 0; i < expanded_width; i++) {
+                // if the point lies along any of the four edges of the mark array, mark it true (visited)
+                if (i == 0 || i == expanded_width - 1 || j == 0 || j == expanded_height - 1) {
+                    mark.elementAt(j).insertElementAt(Boolean.TRUE, i);
+                }
+                // if the point is not along an edge, mark it false (OK to visit)
+                else {
+                    mark.elementAt(j).insertElementAt(Boolean.FALSE, i);
+                }
+            }
+        }
+
+
+        Result current_blob = new Result();
+        results.push(current_blob);
     }
 
     // effect   Print all results on system console.
@@ -176,6 +247,19 @@ public class Blob
                 i, r.area(), r.xCenter(), r.yCenter(),
                 r.angle() * 180 / Math.PI, 
                 r.principalLength1(), r.principalLength2());      
+        }
+    }
+
+    // effect  Print the "mark" (boolean visitation) vector to console.
+    public void print_mark_vector() {
+        for (Vector<Boolean> row : mark) {
+            for (Boolean point : row) {
+                if (point == Boolean.TRUE)
+                    System.out.print("1 ");
+                else if (point == Boolean.FALSE)
+                    System.out.print("0 ");
+            }
+            System.out.println();
         }
     }
 }
