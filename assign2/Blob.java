@@ -50,32 +50,46 @@ public class Blob
             blob_stack.push(newPoint);
         }
 
+        // Function to handle calculation of area and COM in X and Y
+        // Grouped in this way because the code for those three functions was very redundant 
+        public Point geom_data(){
+            // Copy the stack so as to not destroy data when popping
+            Stack<Point> stack_copy = new Stack<Point>();
+            stack_copy.addAll(blob_stack);
+
+            double area = 0;
+            double COM_x = 0;
+            double COM_y = 0;
+
+            while (!stack_copy.empty()){
+                Point point = stack_copy.pop();
+                area += point.weight();
+                COM_x += point.x() * point.weight();
+                COM_y += point.y() * point.weight();
+            }
+
+            COM_x = COM_x / area;
+            COM_y = COM_y / area; 
+
+            return new Point(area, COM_x, COM_y);
+        }
+
         // returns  Blob area
         public double area()
         {
-            // Need to pop off the stack to calculate area, but don't want to destroy data
-            Stack<Point> stack_copy = blob_stack;
-
-            double area = 0;
-
-            while (!stack_copy.empty()){
-                point = stack_copy.pop();
-                area += point.weight();
-            }
-
-            return area;
+            return geom_data().weight();
         }
 
         // returns  x coordinate of center of mass
         public double xCenter()
         {
-            return 0;
+            return geom_data().x();
         }
 
         // returns  y coordinate of center of mass
         public double yCenter()
         {
-            return 0;
+            return geom_data().y();
         }
 
         // returns  Angle in radians of first principal axis of inertia
@@ -199,6 +213,11 @@ public class Blob
     // boolean array to track pixel visitation
     public Vector<Vector<Boolean>> mark = new Vector<Vector<Boolean>>();
 
+    // Setter for Results vector
+    public void results_add(Result r){
+        results.add(r);
+    }
+
     // ***********************
     // *                     *
     // *  Run Blob Analysis  *
@@ -210,7 +229,6 @@ public class Blob
     public void run(Camera.Image img)
     {
         results.clear(); // per Bill's email, we must clear the results vector to prevent stats bugs
-
 
         // initialize mark array 2 larger than the image (for 1 px wide border)
         int expanded_height = img.height() + 2;
@@ -231,9 +249,34 @@ public class Blob
             }
         }
 
-
+        // create a new blob object, the current one to be explored
         Result current_blob = new Result();
-        results.push(current_blob);
+        results_add(current_blob);
+
+        // For each pixel in the image
+        for(int j = 0; j < img.height(); j++){
+            for(int i = 0; i < img.width(); i++){
+                // explore the pixel at (i, j)
+                explore(i, j, img);
+            }
+        }
+    }
+
+
+    public void explore(int i, int j, Camera.Image img) {
+        if (mark.elementAt(j+1).elementAt(i+1) == Boolean.FALSE) {
+            // Mark this pixel as having been visited
+            mark.elementAt(j+1).setElementAt(Boolean.TRUE, i+1);
+
+            // use a threshold to get the weight of the pixel
+            double weight = thresh.weight(img.getPixel(i, j));
+
+            // the pixel has been classified as "object" 
+            if (weight == 1.0) {
+                // add the pixel to the last(current) results object 
+                results.lastElement().add(weight, i, j);
+            }
+        }
     }
 
     // effect   Print all results on system console.
