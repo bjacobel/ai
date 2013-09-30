@@ -75,8 +75,6 @@ public class Program
         System.out.printf("\n");
         camera.image.print();
 
-        /*
-
         // Make statistics objects for six geometric blob properties. Using an
         // array avoids lots of copy/paste programming
         Camera.Stats[] stats = new Camera.Stats[6];
@@ -142,7 +140,5 @@ public class Program
                     stats[i].print(names[i]);
             }
         }
-
-        */
     }
 }
