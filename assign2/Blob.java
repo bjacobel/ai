@@ -2,6 +2,7 @@ package Vision;
 
 import java.util.Stack;
 import java.util.Vector;
+import java.lang.Math;
 
 public class Blob
 {
@@ -70,65 +71,142 @@ public class Blob
             blob.push(newPoint);
         }
 
-        // Function to handle calculation of area and COM in X and Y
-        // Grouped in this way because the code for those three functions was very redundant 
-        public Point geom_data(){
-            // Copy the blob stack so as to not destroy data when popping
-            Stack<Point> blob_copy = new Stack<Point>();
-            blob_copy.addAll(blob);
-
-            double area = 0;
-            double COM_x = 0;
-            double COM_y = 0;
-
-            while (!blob_copy.empty()){
-                Point point = blob_copy.pop();
-                area += point.weight();
-                COM_x += point.x() * point.weight();
-                COM_y += point.y() * point.weight();
-            }
-
-            COM_x = COM_x / area;
-            COM_y = COM_y / area; 
-
-            return new Point(area, COM_x, COM_y);
-        }
-
         // returns  Blob area
         public double area()
         {
-            return geom_data().weight();
+            return M1();
         }
 
         // returns  x coordinate of center of mass
         public double xCenter()
         {
-            return geom_data().x();
+            return Mx() / M1();
         }
 
         // returns  y coordinate of center of mass
         public double yCenter()
         {
-            return geom_data().y();
+            return My() / M1();
         }
 
         // returns  Angle in radians of first principal axis of inertia
         public double angle()
         {
-            return 0;
+
+            return Math.atan2(c(), a() - b())/2;
         }
 
         // returns  First principal length
         double principalLength1()
         {
-            return 0;
+            double N2 = (a() + b() + Math.sqrt(Math.pow(c(), 2) + Math.pow((a()-b()), 2)))/(2 * M1());
+            return Math.sqrt(N2 / M1());
         }
 
         // returns  Second principal length
         public double principalLength2()
         {
-            return 0;
+            double N1 = (a() + b() - Math.sqrt(Math.pow(c(), 2) + Math.pow((a()-b()), 2)))/(2 * M1());
+            return Math.sqrt(N1 / M1());
         }
+
+        public double a(){
+            return M1() * Mxx() - Math.pow(Mx(), 2);
+        }
+
+        public double b(){
+            return M1() * Myy() - Math.pow(My(), 2);
+        }
+
+        public double c(){
+            return M1() * Mxy() - Mx() * My();
+        }
+
+        public double M1(){
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
+
+            double m1 = 0;
+
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
+                m1 += point.weight();
+            }
+
+            return m1;
+        }
+
+        public double Mx(){
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
+
+            double mx = 0;
+
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
+                mx += point.x() * point.weight();
+            }
+
+            return mx;
+        }
+
+        public double My(){
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
+
+            double my = 0;
+
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
+                my += point.y() * point.weight();
+            }
+
+            return my;
+        }
+
+        public double Mxx(){
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
+
+            double mxx = 0;
+
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
+                mxx += Math.pow(point.x(), 2) * point.weight();
+            }
+
+            return mxx;
+        }
+
+        public double Myy(){
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
+
+            double myy = 0;
+
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
+                myy += Math.pow(point.y(), 2) * point.weight();
+            }
+
+            return myy;
+        }
+
+        public double Mxy(){
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
+
+            double mxy = 0;
+
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
+                mxy += point.x() * point.y() * point.weight();
+            }
+
+            return mxy;
+        }
+
+
     }
 
     // ****************
@@ -290,7 +368,7 @@ public class Blob
                         // "neighbors" is defined as 8-neighbor: E, NE, N, NW, W, SW, S, SE
                         for (int k = (int)popped_point.y()-1; k <= (int)popped_point.y() + 1; k++) {
                             for (int l = (int)popped_point.x()-1; l <= (int)popped_point.x() + 1; l++) {
-                                // explore all neighbors but the self
+                                // explore all pixels within 1 +/- horizontally and laterally, but not the self
                                 if (!(l == (int)popped_point.x() && k == (int)popped_point.y())) {
                                     explore(l, k, img);
                                 }
