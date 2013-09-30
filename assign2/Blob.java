@@ -43,6 +43,14 @@ public class Blob
     {
         public Stack<Point> blob_stack = new Stack<Point>();
 
+        public Boolean stack_empty() {
+            return blob_stack.empty();
+        }
+
+        public Point stack_pop() {
+            return blob_stack.pop();
+        }
+
         // effect   Add one pixel to blob of specified weight and position
         public void add(double w, double x, double y)
         {
@@ -204,6 +212,9 @@ public class Blob
     // Results go here
     public Vector<Result> results = new Vector<Result>();
 
+    // Current "result" (the blob being worked on) goes here
+    Result current_blob = new Result();
+
     // run uses this threshold
     public Threshold thresh = new HardPosThreshold(128);
 
@@ -250,20 +261,45 @@ public class Blob
         }
 
         // create a new blob object, the current one to be explored
-        Result current_blob = new Result();
-        results_add(current_blob);
+        current_blob = new Result();
 
         // For each pixel in the image
         for(int j = 0; j < img.height(); j++){
             for(int i = 0; i < img.width(); i++){
                 // explore the pixel at (i, j)
-                explore(i, j, img);
+                Boolean was_pushed = explore(i, j, img);
+
+                // if the pixel was determined to be part of an object
+                if (was_pushed) {
+                    do {
+                        Point popped_point = current_blob.stack_pop();
+
+                        // explore all the neighbors of popped_point
+                        // "neighbors" is defined as 8-neighbor: E, NE, N, NW, W, SW, S, SE
+                        for (int k = (int)popped_point.y()-1; k <= (int)popped_point.y() + 1; k++) {
+                            for (int l = (int)popped_point.x()-1; l <= (int)popped_point.x() + 1; l++) {
+                                // explore all neighbors but the self
+                                if (!(l == (int)popped_point.x() && k == (int)popped_point.y())) {
+                                    explore(l, k, img);
+                                    System.out.println(current_blob.area());
+                                }
+                            }
+                        }
+                    } while (!current_blob.stack_empty());
+
+                    if (current_blob.area() > 10) {
+                        results.add(current_blob);
+                    }
+
+                    // reinitialize the blob object for the next go around
+                    current_blob = new Result();
+                }
             }
         }
     }
 
 
-    public void explore(int i, int j, Camera.Image img) {
+    public Boolean explore(int i, int j, Camera.Image img) {
         if (mark.elementAt(j+1).elementAt(i+1) == Boolean.FALSE) {
             // Mark this pixel as having been visited
             mark.elementAt(j+1).setElementAt(Boolean.TRUE, i+1);
@@ -272,11 +308,13 @@ public class Blob
             double weight = thresh.weight(img.getPixel(i, j));
 
             // the pixel has been classified as "object" 
-            if (weight == 1.0) {
+            if (weight >= 0.5) {
                 // add the pixel to the last(current) results object 
-                results.lastElement().add(weight, i, j);
+                current_blob.add(weight, i, j);
+                return Boolean.TRUE;
             }
         }
+        return Boolean.FALSE;
     }
 
     // effect   Print all results on system console.
