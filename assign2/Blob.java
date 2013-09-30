@@ -21,6 +21,13 @@ public class Blob
             this.y = y;
         }
 
+        // This class can also serve as a java.awt.Point replacement when weight is not specified.
+        public Point(double x, double y) {
+            this.weight = 0;
+            this.x = x;
+            this.y = y;
+        }
+
         public double weight(){
             return this.weight;
         }
@@ -41,36 +48,41 @@ public class Blob
     // *****************
     public class Result
     {
-        public Stack<Point> blob_stack = new Stack<Point>();
+        public Stack<Point> stack = new Stack<Point>();
+        public Stack<Point> blob = new Stack<Point>();
 
         public Boolean stack_empty() {
-            return blob_stack.empty();
+            return stack.empty();
         }
 
         public Point stack_pop() {
-            return blob_stack.pop();
+            return stack.pop();
+        }
+
+        public void stack_push(Point p) {
+            stack.push(p);
         }
 
         // effect   Add one pixel to blob of specified weight and position
         public void add(double w, double x, double y)
         {
             Point newPoint = new Point(w, x, y);
-            blob_stack.push(newPoint);
+            blob.push(newPoint);
         }
 
         // Function to handle calculation of area and COM in X and Y
         // Grouped in this way because the code for those three functions was very redundant 
         public Point geom_data(){
-            // Copy the stack so as to not destroy data when popping
-            Stack<Point> stack_copy = new Stack<Point>();
-            stack_copy.addAll(blob_stack);
+            // Copy the blob stack so as to not destroy data when popping
+            Stack<Point> blob_copy = new Stack<Point>();
+            blob_copy.addAll(blob);
 
             double area = 0;
             double COM_x = 0;
             double COM_y = 0;
 
-            while (!stack_copy.empty()){
-                Point point = stack_copy.pop();
+            while (!blob_copy.empty()){
+                Point point = blob_copy.pop();
                 area += point.weight();
                 COM_x += point.x() * point.weight();
                 COM_y += point.y() * point.weight();
@@ -213,7 +225,7 @@ public class Blob
     public Vector<Result> results = new Vector<Result>();
 
     // Current "result" (the blob being worked on) goes here
-    Result current_blob = new Result();
+    Result current_result = new Result();
 
     // run uses this threshold
     public Threshold thresh = new HardPosThreshold(128);
@@ -261,7 +273,7 @@ public class Blob
         }
 
         // create a new blob object, the current one to be explored
-        current_blob = new Result();
+        current_result = new Result();
 
         // For each pixel in the image
         for(int j = 0; j < img.height(); j++){
@@ -272,7 +284,7 @@ public class Blob
                 // if the pixel was determined to be part of an object
                 if (was_pushed) {
                     do {
-                        Point popped_point = current_blob.stack_pop();
+                        Point popped_point = current_result.stack_pop();
 
                         // explore all the neighbors of popped_point
                         // "neighbors" is defined as 8-neighbor: E, NE, N, NW, W, SW, S, SE
@@ -281,18 +293,17 @@ public class Blob
                                 // explore all neighbors but the self
                                 if (!(l == (int)popped_point.x() && k == (int)popped_point.y())) {
                                     explore(l, k, img);
-                                    System.out.println(current_blob.area());
                                 }
                             }
                         }
-                    } while (!current_blob.stack_empty());
+                    } while (!current_result.stack_empty());
 
-                    if (current_blob.area() > 10) {
-                        results.add(current_blob);
+                    if (current_result.area() > 20) {
+                        results.add(current_result);
                     }
 
                     // reinitialize the blob object for the next go around
-                    current_blob = new Result();
+                    current_result = new Result();
                 }
             }
         }
@@ -310,7 +321,8 @@ public class Blob
             // the pixel has been classified as "object" 
             if (weight >= 0.5) {
                 // add the pixel to the last(current) results object 
-                current_blob.add(weight, i, j);
+                current_result.add(weight, i, j);
+                current_result.stack_push(new Point(i, j));
                 return Boolean.TRUE;
             }
         }
