@@ -125,4 +125,4 @@ Fuzzy Threshold 96.0, 160.0
    Angle   1800    -0.00   6.8563   -10.20    10.19
  Length1   1800     7.48   0.2732     7.04     7.92
  Length2   1800     4.49   0.4501     3.80     5.14
-BUILD SUCCESSFUL (total time: 52 seconds)
+BUILD SUCCESSFUL (total time: 48 seconds)

@@ -74,19 +74,19 @@ public class Blob
         // returns  Blob area
         public double area()
         {
-            return M1();
+            return calcMoment("M1");
         }
 
         // returns  x coordinate of center of mass
         public double xCenter()
         {
-            return Mx() / M1();
+            return calcMoment("Mx") / calcMoment("M1");
         }
 
         // returns  y coordinate of center of mass
         public double yCenter()
         {
-            return My() / M1();
+            return calcMoment("My") / calcMoment("M1");
         }
 
         // returns  Angle in radians of first principal axis of inertia
@@ -99,114 +99,52 @@ public class Blob
         // returns  First principal length
         double principalLength1()
         {
-            double N2 = (a() + b() + Math.sqrt(Math.pow(c(), 2) + Math.pow((a()-b()), 2)))/(2 * M1());
-            return Math.sqrt(N2 / M1());
+            double N2 = (a() + b() + Math.sqrt(Math.pow(c(), 2) + Math.pow((a()-b()), 2)))/(2 * calcMoment("M1"));
+            return Math.sqrt(N2 / calcMoment("M1"));
         }
 
         // returns  Second principal length
         public double principalLength2()
         {
-            double N1 = (a() + b() - Math.sqrt(Math.pow(c(), 2) + Math.pow((a()-b()), 2)))/(2 * M1());
-            return Math.sqrt(N1 / M1());
+            double N1 = (a() + b() - Math.sqrt(Math.pow(c(), 2) + Math.pow((a()-b()), 2)))/(2 * calcMoment("M1"));
+            return Math.sqrt(N1 / calcMoment("M1"));
         }
 
         public double a(){
-            return M1() * Mxx() - Math.pow(Mx(), 2);
+            return calcMoment("M1") * calcMoment("Mxx") - Math.pow(calcMoment("Mx"), 2);
         }
 
         public double b(){
-            return M1() * Myy() - Math.pow(My(), 2);
+            return calcMoment("M1") * calcMoment("Myy") - Math.pow(calcMoment("My"), 2);
         }
 
         public double c(){
-            return M1() * Mxy() - Mx() * My();
+            return calcMoment("M1") * calcMoment("Mxy") - calcMoment("Mx") * calcMoment("My");
         }
 
-        public double M1(){
+        public double calcMoment(String whichMoment){
             Stack<Point> blob_copy = new Stack<Point>();
             blob_copy.addAll(blob);
 
-            double m1 = 0;
+            double moment = 0;
 
+
+            // NOTE: This code will only work with Java SE 7. Strings in
+            // switch statements were not supported in JDK<=6, apparently.
             while (!blob_copy.empty()){
                 Point point = blob_copy.pop();
-                m1 += point.weight();
+                switch (whichMoment) {
+                    case "M1":  moment += point.weight(); break;
+                    case "Mx":  moment += point.x() * point.weight(); break;
+                    case "My":  moment += point.y() * point.weight(); break;
+                    case "Mxx": moment += Math.pow(point.x(), 2) * point.weight(); break;
+                    case "Myy": moment += Math.pow(point.y(), 2) * point.weight(); break;
+                    case "Mxy": moment += point.x() * point.y() * point.weight(); break;
+                }
             }
 
-            return m1;
+            return moment;
         }
-
-        public double Mx(){
-            Stack<Point> blob_copy = new Stack<Point>();
-            blob_copy.addAll(blob);
-
-            double mx = 0;
-
-            while (!blob_copy.empty()){
-                Point point = blob_copy.pop();
-                mx += point.x() * point.weight();
-            }
-
-            return mx;
-        }
-
-        public double My(){
-            Stack<Point> blob_copy = new Stack<Point>();
-            blob_copy.addAll(blob);
-
-            double my = 0;
-
-            while (!blob_copy.empty()){
-                Point point = blob_copy.pop();
-                my += point.y() * point.weight();
-            }
-
-            return my;
-        }
-
-        public double Mxx(){
-            Stack<Point> blob_copy = new Stack<Point>();
-            blob_copy.addAll(blob);
-
-            double mxx = 0;
-
-            while (!blob_copy.empty()){
-                Point point = blob_copy.pop();
-                mxx += Math.pow(point.x(), 2) * point.weight();
-            }
-
-            return mxx;
-        }
-
-        public double Myy(){
-            Stack<Point> blob_copy = new Stack<Point>();
-            blob_copy.addAll(blob);
-
-            double myy = 0;
-
-            while (!blob_copy.empty()){
-                Point point = blob_copy.pop();
-                myy += Math.pow(point.y(), 2) * point.weight();
-            }
-
-            return myy;
-        }
-
-        public double Mxy(){
-            Stack<Point> blob_copy = new Stack<Point>();
-            blob_copy.addAll(blob);
-
-            double mxy = 0;
-
-            while (!blob_copy.empty()){
-                Point point = blob_copy.pop();
-                mxy += point.x() * point.y() * point.weight();
-            }
-
-            return mxy;
-        }
-
-
     }
 
     // ****************
@@ -418,19 +356,6 @@ public class Blob
                 i, r.area(), r.xCenter(), r.yCenter(),
                 r.angle() * 180 / Math.PI, 
                 r.principalLength1(), r.principalLength2());      
-        }
-    }
-
-    // effect  Print the "mark" (boolean visitation) vector to console.
-    public void print_mark_vector() {
-        for (Vector<Boolean> row : mark) {
-            for (Boolean point : row) {
-                if (point == Boolean.TRUE)
-                    System.out.print("1 ");
-                else if (point == Boolean.FALSE)
-                    System.out.print("0 ");
-            }
-            System.out.println();
         }
     }
 }
