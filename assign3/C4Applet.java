@@ -43,6 +43,7 @@ public class C4Applet extends Applet
 	//instance variables
 	private Button restart;
 	private Choice levels;
+	private Choice pruning;
 	private ImagePanel imagePanel;
 
 	private MinimaxPlayer computer;
@@ -175,13 +176,13 @@ public class C4Applet extends Applet
 		}
 		else if(evt.target.equals(pruning))
 		{
-			if(pruning.getSelectedItem == "On")
+			if(pruning.getSelectedItem() == "On")
 			{
-				computer.setPruning(1);
+				computer.setPruning(true);
 			}
-			else if(pruning.getSelectedItem == "Off")
+			else if(pruning.getSelectedItem() == "Off")
 			{
-				computer.setPruning(0);
+				computer.setPruning(false);
 			}
 		}
 		else if(evt.target.equals(levels))

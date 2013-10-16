@@ -124,9 +124,9 @@ final class MinimaxCalculator {
         Move[] moves = board.getPossibleMoves(maxPlayer);
 
         // some instantiation the below method will need
-        int alpha = MIN_POSSIBLE_STRENGTH  // set a to negative infinity or whatever
-        int beta = MAX_POSSIBLE_STRENGTH  // b = +infinity (not really, just the max on the board)
-        int furthestDepth = 0;
+        int alpha = MIN_POSSIBLE_STRENGTH;  // set a to negative infinity or whatever
+        int beta = MAX_POSSIBLE_STRENGTH;  // b = +infinity (not really, just the max on the board)
+        int maxIndex = 0;
         int current;
 
 
@@ -144,7 +144,7 @@ final class MinimaxCalculator {
 
                 if (current > alpha) {
                     alpha = current;
-                    furthestDepth = i;
+                    maxIndex = i;
                 }
 
                 board.undoLastMove();   // undo exploratory move
@@ -191,20 +191,20 @@ final class MinimaxCalculator {
                 current = expandMinNode(depth - 1, alpha);
 
                 // early return for alpha/beta pruning
-                if (current < prevBeta) {
+                if (current > prevBeta) {
                     board.undoLastMove();
                     return current;
                 }
 
-                if (current < alpha)
-                    beta = current;
+                if (current > alpha)
+                    alpha = current;
 
                 board.undoLastMove();   // undo exploratory move
             }  // end if move made
             
         }  // end for all moves
         
-        return maxValue;
+        return alpha;
         
     }  // end expandMaxNode
     
@@ -250,6 +250,7 @@ final class MinimaxCalculator {
             
         }  // end for all moves
         
-        return minValue;
+        return beta;
         
     }  // end expandMinNode
+}
