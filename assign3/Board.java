@@ -78,5 +78,11 @@ public interface Board extends Cloneable {
 	 * to players when we ask them for their move.
 	 */
 	public Object clone();
+
+
+	// For managing the pruning option.
+	public Boolean getPruning();
+
+	public void setPruning(Boolean onoff);
   
 }

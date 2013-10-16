@@ -21,7 +21,6 @@ public class MinimaxPlayer extends DefaultPlayer {
     //the number of levels minimax will look ahead
     private int depth = 1;
     private Player minPlayer;
-    private Boolean pruning = Boolean.FALSE; //whether pruning is turned on or off; off by default
     
 //----------------------------------------------
     //constructors
@@ -50,10 +49,6 @@ public class MinimaxPlayer extends DefaultPlayer {
      */
     public void setDepth(int anInt) {
         depth = anInt;
-    }
-
-    public void setPruning(Boolean onoff) {
-        pruning = onoff;
     }
     
     /** Passed a copy of the board, asked what move it would like to make.
@@ -192,8 +187,12 @@ final class MinimaxCalculator {
 
                 // early return for alpha/beta pruning
                 if (current > prevBeta) {
-                    board.undoLastMove();
-                    return current;
+                    if (board.getPruning()) {
+                        board.undoLastMove();
+                        return current;
+                    } else {
+                        // System.out.println("An early return would have happened here, if pruning were turned on.");
+                    }
                 }
 
                 if (current > alpha)
@@ -238,8 +237,12 @@ final class MinimaxCalculator {
 
                 // early return for alpha/beta pruning
                 if (current < prevAlpha) {
-                    board.undoLastMove();
-                    return current;
+                    if (board.getPruning()) {
+                        board.undoLastMove();
+                        return current;
+                    } else {
+                        // System.out.println("An early return would have happened here, if pruning were turned on.");
+                    }
                 }
 
                 if (current < beta)

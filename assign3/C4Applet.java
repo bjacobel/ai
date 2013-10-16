@@ -129,13 +129,13 @@ public class C4Applet extends Applet
 		levels.select(STARTING_LEVEL);
 
 		controlPanel.add(restart);
-		controlPanel.add(new Label("              Level"));
+		controlPanel.add(new Label("  Level"));
 		controlPanel.add(levels);
 
 		pruning = new Choice();
 		pruning.add("Off");
 		pruning.add("On");
-		controlPanel.add(new Label("              Pruning"));
+		controlPanel.add(new Label("  Pruning"));
 		controlPanel.add(pruning);
    	 
 		this.add(controlPanel, BorderLayout.SOUTH);
@@ -178,11 +178,13 @@ public class C4Applet extends Applet
 		{
 			if(pruning.getSelectedItem() == "On")
 			{
-				computer.setPruning(true);
+				board.setPruning(true);
+				System.out.println("A/B Pruning turned on.");
 			}
 			else if(pruning.getSelectedItem() == "Off")
 			{
-				computer.setPruning(false);
+				board.setPruning(false);
+				System.out.println("A/B Pruning turned off.");
 			}
 		}
 		else if(evt.target.equals(levels))

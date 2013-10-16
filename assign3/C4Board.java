@@ -49,6 +49,8 @@ public final class C4Board implements Board
 	//moves
 	private Move[] firstPlayerMoves;
 	private Move[] secondPlayerMoves;
+
+    private Boolean pruning = Boolean.FALSE; //whether pruning is turned on or off; off by default
 	
 
 //------------------------------------------
@@ -394,5 +396,15 @@ public final class C4Board implements Board
 		
 		return buf.toString();
 	}
+
+//---------------------------------------------
+	// Game settings
+	public Boolean getPruning() {
+        return pruning;
+    }
+
+    public void setPruning(Boolean onoff) {
+        pruning = onoff;
+    }
 
 }//end class C4Board
