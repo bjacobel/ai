@@ -130,6 +130,12 @@ public class C4Applet extends Applet
 		controlPanel.add(restart);
 		controlPanel.add(new Label("              Level"));
 		controlPanel.add(levels);
+
+		pruning = new Choice();
+		pruning.add("Off");
+		pruning.add("On");
+		controlPanel.add(new Label("              Pruning"));
+		controlPanel.add(pruning);
    	 
 		this.add(controlPanel, BorderLayout.SOUTH);
     
@@ -167,6 +173,17 @@ public class C4Applet extends Applet
 		{
 			gameMaster.restartGame();	
 		}
+		else if(evt.target.equals(pruning))
+		{
+			if(pruning.getSelectedItem == "On")
+			{
+				computer.setPruning(1);
+			}
+			else if(pruning.getSelectedItem == "Off")
+			{
+				computer.setPruning(0);
+			}
+		}
 		else if(evt.target.equals(levels))
 		{
 			if(levels.getSelectedItem() == L1)
@@ -201,7 +218,6 @@ public class C4Applet extends Applet
 			{
 				computer.setDepth(8);
 			}
-		
 		}
 		else
 		{
