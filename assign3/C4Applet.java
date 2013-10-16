@@ -492,6 +492,8 @@ class ImagePanel extends Panel implements GameEventListener
 	{
 		lastComputerMove = null; 
 		resetOffScreen();
+
+		System.out.println("\nNew game.");
 	}
 	
 	/**

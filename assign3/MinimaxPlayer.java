@@ -111,7 +111,7 @@ final class MinimaxCalculator {
         
         // we have a problem, Houston...
         if(depth == 0) {
-            System.out.println("Error, 0 depth in minumax player");
+            System.out.println("Error, 0 depth in minimax player");
             Thread.dumpStack();
             return null;
         }
