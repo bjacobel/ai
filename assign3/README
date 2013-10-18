@@ -1,0 +1,5 @@
+To run the program with and without alpha-beta pruning, compile and open the applet normally.
+I have built a drop-down menu into the applet that allows you to enable or disable alpha-beta 
+pruning on the fly. It operates in the same fashion as the "level" selector.
+
+-- Brian
