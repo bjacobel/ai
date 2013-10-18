@@ -15,6 +15,6 @@ for line in f.readlines():
     elif re.match(r'\w+', line):
         total_moves += int(re.findall(r'\d+', line)[0])
         total_time += int(re.findall(r'\d+', line)[1])
-
+print("Total moves: {}   Total time: {}".format(total_moves, total_time))
 
 
