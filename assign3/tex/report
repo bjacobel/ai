@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{Assignment 2: Blob Analysis}
+\author{Brian Jacobel}
+\date{Artificial Intelligence, Fall 2013}
+
+\usepackage{natbib}
+\usepackage{morefloats}
+\usepackage{graphicx}
+\usepackage[margin=1in]{geometry}
+\usepackage{setspace}
+\usepackage{indentfirst}
+
+\begin{document}
+
+\maketitle
+
+\begin{doublespace}
+
+\section{Introduction}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=4.5in]{/Users/bjacobel/Dropbox/PSO/Graphs/Tables/Sphere.png}
+\caption{Means and Standard Deviations for the Sphere function.}
+\end{figure}
+
+
+\end{doublespace}
+
+\end{document}
+
+
+
