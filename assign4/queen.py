@@ -64,8 +64,8 @@ class Queen:
                 usedUpDiagonals.append(queen.baseUpDiagonal())
                 usedDownDiagonals.append(queen.baseDownDiagonal())
 
-            for i in xrange(0, self.boardSize*2-1):
-                for j in xrange(0, self.boardSize*2-1):
+            for i in range(0, self.boardSize*2-1):
+                for j in range(0, self.boardSize*2-1):
                     if usedUpDiagonals.count(i) == 1 and usedDownDiagonals.count(j) == 1:
                         return True, numConflicts
 
