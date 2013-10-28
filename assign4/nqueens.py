@@ -28,6 +28,25 @@ def drawboard(numQueens):
             print(hLine)
 
 
+# Had to write this out into a separate function so I can "return" and break the double for loop
+# python's not all roses sometimes
+def tryNewLocations(queens, unsatisfier):
+    numQueens = len(queens)
+
+    bestNumConflicts = unsatisfier.numConflicts(queens)
+    bestRow = unsatisfier.row
+    bestColumn = unsatisfier.column
+    for tryrow in xrange(0, numQueens-1):
+        for trycolumn in xrange(0, numQueens-1):
+            unsatisfier.move(tryrow, trycolumn)
+            if unsatisfier.numConflicts(queens) < bestNumConflicts:
+                # print ("moved bad queen ({}) to ({},{}) (better, at {})".format(bestNumConflicts, bestRow, bestColumn, unsatisfier.numConflicts(queens)))
+                bestNumConflicts = unsatisfier.numConflicts(queens)
+                bestRow = tryrow
+                bestColumn = trycolumn
+                return
+
+
 # method separate from __main()__ so this can be imported & called from a tester class
 def run(numQueens, maxSteps):
     #  create queens (really this is the constraint array, because the 
@@ -49,7 +68,9 @@ def run(numQueens, maxSteps):
             if not unsatisfier.isValid(queens):
                 break
 
-        print unsatisfier.numConflicts(queens)
+        # try new locations for unsatisfier, find the one that's least bad
+        tryNewLocations(queens, unsatisfier)
+
 
     print ("No solution found. Sorry.")
           

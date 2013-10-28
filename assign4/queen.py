@@ -6,10 +6,8 @@ class Queen:
         self.column = randint(0, boardSize-1)
         self.boardSize = boardSize
 
-    def moveRow(self, newRow):
+    def move(self, newRow, newColumn):
         self.row = newRow
-
-    def moveColumn(self, newColumn):
         self.column = newColumn
    
     # returns the number of the square which, if a diagonal were drawn northeast
