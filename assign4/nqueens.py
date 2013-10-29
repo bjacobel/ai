@@ -9,11 +9,6 @@ def drawboard(queens):
     if numQueens > 25:
         print("Sorry, drawing the board for a problem of this size isn't practical.")
         return
-
-    if numQueens < 10:
-        qLabel = " Q"
-    else:
-        qLabel = "Q"
     
     hLineLen =  (7 * (numQueens)) + 1
     hLine = ""
@@ -30,7 +25,11 @@ def drawboard(queens):
             hasQueen = False
             for queen in queens:
                 if queen.row == row and queen.column == column:
-                    print("| {} ".format(qLabel+str(queens.index(queen)))),
+                    if queens.index(queen) < 10:
+                        label = " Q"+str(queens.index(queen))
+                    else:
+                        label = "Q"+str(queens.index(queen))
+                    print("| {} ".format(label)),
                     hasQueen = True
             if not hasQueen:
                 print("|     "),
@@ -39,26 +38,6 @@ def drawboard(queens):
             print("|     "),        
         print("|")
         print(hLine)
-
-
-# Had to write this out into a separate function so I can "return" and break the double for loop
-# python's not all roses sometimes
-def tryNewLocations(queens, unsatisfier):
-    numQueens = len(queens)
-
-    bestNumConflicts = unsatisfier.numConflicts(queens)
-    bestRow = unsatisfier.row
-    bestColumn = unsatisfier.column
-    for tryrow in range(0, numQueens-1):
-        for trycolumn in range(0, numQueens-1):
-            unsatisfier.move(tryrow, trycolumn)
-            if unsatisfier.numConflicts(queens) < bestNumConflicts:
-                # print ("moved bad queen ({}) to ({},{}) (better, at {})".format(bestNumConflicts, bestRow, bestColumn, unsatisfier.numConflicts(queens)))
-                bestNumConflicts = unsatisfier.numConflicts(queens)
-                bestRow = tryrow
-                bestColumn = trycolumn
-    
-    unsatisfier.move(bestRow, bestColumn)
 
 
 # method separate from __main()__ so this can be imported & called from a tester class
@@ -74,7 +53,7 @@ def run(numQueens, maxSteps):
         if all(queen.isValid(queens) for queen in queens):
             print("Solution found:")
             drawboard(queens)
-            return
+            return True
 
         # randomly find a queen in an invalid position
         while True:  # this is awkward, I wish Python had a do-while
@@ -83,14 +62,33 @@ def run(numQueens, maxSteps):
                 break
 
         # try new locations for unsatisfier, find the one that's least bad
-        tryNewLocations(queens, unsatisfier)
+        bestNumConflicts = unsatisfier.numConflicts(queens)
+        bestRow = unsatisfier.row
+        bestColumn = unsatisfier.column
+        #print ("Previous unsatisfier loc: {}, {}. Conflicts: {}".format(bestRow, bestColumn, bestNumConflicts))
+        for tryrow in range(0, numQueens-1):
+            for trycolumn in range(0, numQueens-1):
+                unsatisfier.move(tryrow, trycolumn)
+                if unsatisfier.numConflicts(queens) < bestNumConflicts:
+                    #print("Found a better spot!!")
+                    bestNumConflicts = unsatisfier.numConflicts(queens)
+                    bestRow = tryrow
+                    bestColumn = trycolumn
 
-    print ("No solution found. Sorry.")
+        #print ("New unsatisfier loc: {}, {}. Conflicts: {}".format(bestRow, bestColumn, bestNumConflicts))
+        unsatisfier.move(bestRow, bestColumn) 
+        #print("")      
+
+    print ("No solution found. Here's as far as I got:")
+    for queen in queens:
+        print(queen)
+    return False
+
           
 
 def main():
     # default variables
-    numQueens = 4
+    numQueens = 8
     maxSteps = 50
 
     # get commandline arguments (if running interactively)

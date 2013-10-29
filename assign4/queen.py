@@ -10,10 +10,10 @@ class Queen:
         self.row = newRow
         self.column = newColumn
    
-    # returns the number of the square which, if a diagonal were drawn northeast
+    # returns the number of the square which, if a diagonal were drawn up and left
     # from this square to one of the numbered squares, the diagonal would intercept.
-    # "numbered squares" are the squares on the east and north sides of the grid.
-    # they are numbered clockwise from southeast.
+    # "numbered squares" are the squares on the left and top sides of the grid.
+    # they are numbered clockwise from bottom left, starting at 0.
     # "Down diagonals" are so named because they have a slope of negative 1.
     def baseDownDiagonal(self):
         downDiagRow = self.row
@@ -26,10 +26,10 @@ class Queen:
         else: 
             return (self.boardSize - 1 - downDiagRow) + downDiagColumn
 
-    # returns the number of the square which, if a diagonal were drawn southeast
+    # returns the number of the square which, if a diagonal were drawn down and left
     # from this square to one of the numbered squares, the diagonal would intercept.
-    # "numbered squares" are the squares on the east and south sides of the grid.
-    # they are numbered counter-clockwise from northeast.
+    # "numbered squares" are the squares on the left and bottom sides of the grid.
+    # they are numbered counter-clockwise from top left, starting at 0.
     # "Up diagonals" are so named because they have a slope of positive 1.
     def baseUpDiagonal(self):
         upDiagRow = self.row
@@ -38,46 +38,56 @@ class Queen:
             upDiagRow += 1
             upDiagColumn -= 1
         if upDiagColumn == 0:
-            return self.boardSize - 1 - upDiagRow
+            return upDiagRow
         else: 
-            return (self.boardSize - 1 - upDiagRow) + upDiagColumn
+            return upDiagRow + upDiagColumn
 
     # given an array of queens, find out if this position is valid and how many conficts it has
     def validator(self, queens):
         numConflicts = 0
+        straightLinesOK = False
+        diagonalLinesOK = False
 
+        ## CHECK HORIZONTAL/VERTICAL ##
+        # there sould be exactly one instance of this row and column in queens
         usedRows = []
         usedColumns = []
         for queen in queens:
             usedRows.append(queen.row)
             usedColumns.append(queen.column)
-
-        # Check horizontal and vertical: there sould be exactly one instance of this row and column in queens
-        # This is easy to do, so we'll do it before the diagonal checking    
+ 
         if usedRows.count(self.row) == 1 and usedColumns.count(self.column) == 1:
+            straightLinesOK = True
+        else:
+            # find the number of conflicts in rows and columns
+            numConflicts += usedRows.count(self.row)-1
+            numConflicts += usedColumns.count(self.column)-1
 
-            # "up diagonals" go from SW to NE, "down diagonals" go from NW to SE
-            # there are boardSize*2-1 of each
-            usedUpDiagonals = []
-            usedDownDiagonals = []
-            for queen in queens:
-                usedUpDiagonals.append(queen.baseUpDiagonal())
-                usedDownDiagonals.append(queen.baseDownDiagonal())
 
-            for i in range(0, self.boardSize*2-1):
-                for j in range(0, self.boardSize*2-1):
-                    if usedUpDiagonals.count(i) == 1 and usedDownDiagonals.count(j) == 1:
-                        return True, numConflicts
+        ## CHECK DIAGONAL ##
+        # "up diagonals" go from SW to NE, "down diagonals" go from NW to SE
+        # there are boardSize*2-1 of each
+        usedUpDiagonals = []
+        usedDownDiagonals = []
+        for queen in queens:
+            usedUpDiagonals.append(queen.baseUpDiagonal())
+            usedDownDiagonals.append(queen.baseDownDiagonal())
 
-            # find the number of conflicts in diagonals
-            numConflicts += usedUpDiagonals.count(self.baseUpDiagonal())
-            numConflicts += usedDownDiagonals.count(self.baseDownDiagonal())
+        print(usedUpDiagonals)
+        print(usedDownDiagonals)
 
-        # find the number of conflics in rows and columns
-        numConflicts += usedRows.count(self.row)
-        numConflicts += usedColumns.count(self.column)
-        
-        return False, numConflicts
+        if usedUpDiagonals.count(self.baseUpDiagonal()) == 1 and usedDownDiagonals.count(self.baseDownDiagonal()) == 1:
+            diagonalLinesOK = True
+        else:
+            print("{} queens in up diagonal {}".format(usedUpDiagonals.count(self.baseUpDiagonal()), self.baseUpDiagonal()))
+            print("{} queens in down diagonal {}".format(usedDownDiagonals.count(self.baseDownDiagonal()), self.baseDownDiagonal()))
+            numConflicts += usedUpDiagonals.count(self.baseUpDiagonal())-1
+            numConflicts += usedDownDiagonals.count(self.baseDownDiagonal())-1
+
+        if diagonalLinesOK and straightLinesOK:
+            return True, 0
+        else:
+            return False, numConflicts
 
     # interfaces for finding just the truth value or the number of conflicts, respectively
     def isValid(self, queens):
