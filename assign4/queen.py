@@ -73,14 +73,9 @@ class Queen:
             usedUpDiagonals.append(queen.baseUpDiagonal())
             usedDownDiagonals.append(queen.baseDownDiagonal())
 
-        print(usedUpDiagonals)
-        print(usedDownDiagonals)
-
         if usedUpDiagonals.count(self.baseUpDiagonal()) == 1 and usedDownDiagonals.count(self.baseDownDiagonal()) == 1:
             diagonalLinesOK = True
         else:
-            print("{} queens in up diagonal {}".format(usedUpDiagonals.count(self.baseUpDiagonal()), self.baseUpDiagonal()))
-            print("{} queens in down diagonal {}".format(usedDownDiagonals.count(self.baseDownDiagonal()), self.baseDownDiagonal()))
             numConflicts += usedUpDiagonals.count(self.baseUpDiagonal())-1
             numConflicts += usedDownDiagonals.count(self.baseDownDiagonal())-1
 

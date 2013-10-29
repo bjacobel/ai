@@ -1,13 +1,13 @@
 import getopt
 import sys
-from random import randint
+from random import randint, choice
 from queen import Queen
 
 def drawboard(queens):
     numQueens = len(queens)
 
     if numQueens > 25:
-        print("Sorry, drawing the board for a problem of this size isn't practical.")
+        print("Solution found.")
         return
     
     hLineLen =  (7 * (numQueens)) + 1
@@ -49,39 +49,43 @@ def run(numQueens, maxSteps):
         queens.append(Queen(numQueens))
 
     for i in range(0, maxSteps):
+        totalConflicts = 0
+        for queen in queens:
+            totalConflicts += queen.numConflicts(queens)
         # if all queens are in valid positions
         if all(queen.isValid(queens) for queen in queens):
-            print("Solution found:")
             drawboard(queens)
             return True
 
         # randomly find a queen in an invalid position
         while True:  # this is awkward, I wish Python had a do-while
-            unsatisfier = queens[randint(0, numQueens-1)]
+            unsatisfier = choice(queens)
             if not unsatisfier.isValid(queens):
                 break
 
-        # try new locations for unsatisfier, find the one that's least bad
+        # try new locations for unsatisfier, find a set of candidate locations that has the same or less conflicts
         bestNumConflicts = unsatisfier.numConflicts(queens)
-        bestRow = unsatisfier.row
-        bestColumn = unsatisfier.column
-        #print ("Previous unsatisfier loc: {}, {}. Conflicts: {}".format(bestRow, bestColumn, bestNumConflicts))
+        candidateNewLocs = []
         for tryrow in range(0, numQueens-1):
             for trycolumn in range(0, numQueens-1):
-                unsatisfier.move(tryrow, trycolumn)
-                if unsatisfier.numConflicts(queens) < bestNumConflicts:
-                    #print("Found a better spot!!")
-                    bestNumConflicts = unsatisfier.numConflicts(queens)
-                    bestRow = tryrow
-                    bestColumn = trycolumn
+                if (tryrow, trycolumn) != (unsatisfier.row, unsatisfier.column):
+                    unsatisfier.move(tryrow, trycolumn)
+                    if unsatisfier.numConflicts(queens) == bestNumConflicts:
+                        candidateNewLocs.append((unsatisfier.row, unsatisfier.column))
+                    elif unsatisfier.numConflicts(queens) < bestNumConflicts:
+                        candidateNewLocs = []
+                        candidateNewLocs.append((unsatisfier.row, unsatisfier.column))
+                        bestNumConflicts = unsatisfier.numConflicts(queens)
 
-        #print ("New unsatisfier loc: {}, {}. Conflicts: {}".format(bestRow, bestColumn, bestNumConflicts))
-        unsatisfier.move(bestRow, bestColumn) 
-        #print("")      
+        # randomly pick a new location from the generated candidates, and move to it
+        try:
+            loc = choice(candidateNewLocs)
+            unsatisfier.move(loc[0], loc[1])
+        except:
+            # no new locs were generated, so leave the poor queen alone
+            pass
 
-    print ("No solution found. Here's as far as I got:")
-    for queen in queens:
-        print(queen)
+    print ("No solution found. Stubborn conflicts: " + str(totalConflicts))
     return False
 
           
@@ -89,7 +93,7 @@ def run(numQueens, maxSteps):
 def main():
     # default variables
     numQueens = 8
-    maxSteps = 50
+    maxSteps = 100
 
     # get commandline arguments (if running interactively)
     try:
