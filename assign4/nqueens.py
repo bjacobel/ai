@@ -43,7 +43,7 @@ def drawboard(queens):
 # method separate from __main()__ so this can be imported & called from a tester class
 # returns True if it succeeded in satisfying all constraints, or False if not
 # plus the total time run and the number of moves run for
-def run(numQueens, maxSteps):
+def run(numQueens, maxSteps, interactive):
     #  create queens (really this is the constraint array, because the 
     #    constraint for each `queen` in `queens` is `queen.isValid(queens) == true`)
     queens = []
@@ -60,8 +60,10 @@ def run(numQueens, maxSteps):
 
         if totalConflicts == 0:
             finish = (time.time() - start)*1000
-            print ("Solved in {} moves and {:.3f} ms.".format(i, finish))
-            drawboard(queens) # won't really do anything for nQ > 25, shouldn't affect performance
+            # don't print anything while collecting mass data
+            if interactive:
+                print ("Solved in {} moves and {:.3f} ms.".format(i, finish))
+                drawboard(queens)
             return True, finish, i
 
         # randomly find a queen in an invalid position
@@ -107,6 +109,7 @@ def main():
     # default variables
     numQueens = 8
     maxSteps = 500
+    interactive = True
 
     # get commandline arguments (if running interactively)
     try:
@@ -118,7 +121,7 @@ def main():
             if opt == "-n":
                 numQueens = int(arg)
 
-    run(numQueens, maxSteps)
+    run(numQueens, maxSteps, interactive)
 
 if __name__ == "__main__":
     main()

@@ -1,20 +1,22 @@
 from __future__ import division
 import nqueens
 
-queens = 30
+nqueens_to_test = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]
 limit = 500
 trials = 10
 
-results = []
-times = []
-runs = []
+for queens in nqueens_to_test:
+    results = []
+    times = []
+    runs = []
 
-for i in range(0, trials):
-    success, time, moves = nqueens.run(queens, limit)
-    results.append(success)
-    if success:
-        times.append(time)
-        runs.append(moves)
+    for i in range(0, trials):
+        success, time, moves = nqueens.run(queens, limit, False)
+        results.append(success)
+        if success:
+            times.append(time)
+            runs.append(moves)
 
-print("Success rate: {:.1f}%".format(results.count(True)/trials*100.0))
-print("Average time: {:.3f}\nAverage moves: {}".format(sum(times) / float(len(times)), sum(runs) / float(len(runs))))
+    print("Did {} trials with {} queens.".format(trials, queens))
+    print("Success rate: {:.1f}%".format(results.count(True)/trials*100.0))
+    print("Average time: {:.3f}\nAverage moves: {}\n".format(sum(times) / float(len(times)), sum(runs) / float(len(runs))))
