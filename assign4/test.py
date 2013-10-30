@@ -1,9 +1,9 @@
 from __future__ import division
 import nqueens
 
-queens = 8
-limit = 100
-trials = 10
+queens = 50
+limit = 500
+trials = 100
 results = []
 
 for i in range(0, trials):

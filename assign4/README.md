@@ -11,5 +11,12 @@ To run the code, enter the command
 If you do not specify the *-n* command line switch for the number of queens, 8 queens will be used.
 
 
+The file test.py contains code to run the program multiple times and compile the results. To run it:
+
+	python test.py
+
+Variables such as number of iterations, number of queens and so forth are hard-coded in this file.
+
+
 
 #####--Brian Jacobel, 10/26/13

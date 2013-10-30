@@ -1,14 +1,13 @@
 from random import randint
 
 class Queen:
-    def __init__(self, boardSize):
-        self.row = randint(0, boardSize-1)
-        self.column = randint(0, boardSize-1)
+    def __init__(self, column, boardSize):
+        self.row = 0
+        self.column = column
         self.boardSize = boardSize
 
-    def move(self, newRow, newColumn):
+    def move(self, newRow):
         self.row = newRow
-        self.column = newColumn
    
     # returns the number of the square which, if a diagonal were drawn up and left
     # from this square to one of the numbered squares, the diagonal would intercept.
@@ -44,24 +43,20 @@ class Queen:
 
     # given an array of queens, find out if this position is valid and how many conficts it has
     def validator(self, queens):
-        numConflicts = 0
+        straightConflicts = diagonalConflicts = 0
         straightLinesOK = False
         diagonalLinesOK = False
 
         ## CHECK HORIZONTAL/VERTICAL ##
-        # there sould be exactly one instance of this row and column in queens
+        # there sould be exactly one instance of this row in queens
         usedRows = []
-        usedColumns = []
         for queen in queens:
             usedRows.append(queen.row)
-            usedColumns.append(queen.column)
  
-        if usedRows.count(self.row) == 1 and usedColumns.count(self.column) == 1:
+        if usedRows.count(self.row) == 1:
             straightLinesOK = True
         else:
-            # find the number of conflicts in rows and columns
-            numConflicts += usedRows.count(self.row)-1
-            numConflicts += usedColumns.count(self.column)-1
+            straightConflicts += usedRows.count(self.row)-1
 
 
         ## CHECK DIAGONAL ##
@@ -76,13 +71,13 @@ class Queen:
         if usedUpDiagonals.count(self.baseUpDiagonal()) == 1 and usedDownDiagonals.count(self.baseDownDiagonal()) == 1:
             diagonalLinesOK = True
         else:
-            numConflicts += usedUpDiagonals.count(self.baseUpDiagonal())-1
-            numConflicts += usedDownDiagonals.count(self.baseDownDiagonal())-1
+            diagonalConflicts += usedUpDiagonals.count(self.baseUpDiagonal())-1
+            diagonalConflicts += usedDownDiagonals.count(self.baseDownDiagonal())-1
 
         if diagonalLinesOK and straightLinesOK:
             return True, 0
         else:
-            return False, numConflicts
+            return False, straightConflicts + diagonalConflicts
 
     # interfaces for finding just the truth value or the number of conflicts, respectively
     def isValid(self, queens):

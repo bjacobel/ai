@@ -6,8 +6,7 @@ from queen import Queen
 def drawboard(queens):
     numQueens = len(queens)
 
-    if numQueens > 25:
-        print("Solution found.")
+    if numQueens > 25:  # cowardly refuse to print grids larger than could possibly fit on the screen
         return
     
     hLineLen =  (7 * (numQueens)) + 1
@@ -38,7 +37,7 @@ def drawboard(queens):
             print("|     "),        
         print("|")
         print(hLine)
-
+        
 
 # method separate from __main()__ so this can be imported & called from a tester class
 def run(numQueens, maxSteps):
@@ -46,44 +45,51 @@ def run(numQueens, maxSteps):
     #    constraint for each `queen` in `queens` is `queen.isValid(queens) == true`)
     queens = []
     for i in range(0, numQueens):
-        queens.append(Queen(numQueens))
+        queens.append(Queen(i, numQueens))
 
     for i in range(0, maxSteps):
+        # print ("run " + str(i))
         totalConflicts = 0
         for queen in queens:
             totalConflicts += queen.numConflicts(queens)
-        # if all queens are in valid positions
-        if all(queen.isValid(queens) for queen in queens):
+
+        if totalConflicts == 0:
+            print ("Solved in {} moves.".format(i))
             drawboard(queens)
             return True
 
         # randomly find a queen in an invalid position
-        while True:  # this is awkward, I wish Python had a do-while
-            unsatisfier = choice(queens)
-            if not unsatisfier.isValid(queens):
-                break
+        unsatisfiers = []
+        for queen in queens:
+            if not queen.isValid(queens):
+                unsatisfiers.append(queen)
+        unsatisfier = choice(unsatisfiers)
 
         # try new locations for unsatisfier, find a set of candidate locations that has the same or less conflicts
-        bestNumConflicts = unsatisfier.numConflicts(queens)
-        candidateNewLocs = []
-        for tryrow in range(0, numQueens-1):
-            for trycolumn in range(0, numQueens-1):
-                if (tryrow, trycolumn) != (unsatisfier.row, unsatisfier.column):
-                    unsatisfier.move(tryrow, trycolumn)
-                    if unsatisfier.numConflicts(queens) == bestNumConflicts:
-                        candidateNewLocs.append((unsatisfier.row, unsatisfier.column))
-                    elif unsatisfier.numConflicts(queens) < bestNumConflicts:
-                        candidateNewLocs = []
-                        candidateNewLocs.append((unsatisfier.row, unsatisfier.column))
-                        bestNumConflicts = unsatisfier.numConflicts(queens)
+        bestNumConflicts = numQueens
+        originalRow = unsatisfier.row
+        candidateNewRows = []
+        for tryrow in range(0, numQueens):
+            # don't allow staying in the same place
+            if tryrow != originalRow:
+                unsatisfier.move(tryrow)
+
+                # make a list of all the places that have the same number of conflicts as the least found so far
+                if unsatisfier.numConflicts(queens) == bestNumConflicts:
+                    candidateNewRows.append(unsatisfier.row)
+
+                # if less conflicts are found, wipe out the list of candidates and start again
+                elif unsatisfier.numConflicts(queens) < bestNumConflicts:
+                    candidateNewRows = []
+                    candidateNewRows.append(unsatisfier.row)
+                    bestNumConflicts = unsatisfier.numConflicts(queens)
 
         # randomly pick a new location from the generated candidates, and move to it
         try:
-            loc = choice(candidateNewLocs)
-            unsatisfier.move(loc[0], loc[1])
+            unsatisfier.move(choice(candidateNewRows))
         except:
             # no new locs were generated, so leave the poor queen alone
-            pass
+            unsatisfier.move(originalRow)
 
     print ("No solution found. Stubborn conflicts: " + str(totalConflicts))
     return False
@@ -93,7 +99,7 @@ def run(numQueens, maxSteps):
 def main():
     # default variables
     numQueens = 8
-    maxSteps = 100
+    maxSteps = 500
 
     # get commandline arguments (if running interactively)
     try:
