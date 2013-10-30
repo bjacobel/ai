@@ -2,6 +2,7 @@ import getopt
 import sys
 from random import randint, choice
 from queen import Queen
+import time
 
 def drawboard(queens):
     numQueens = len(queens)
@@ -37,15 +38,19 @@ def drawboard(queens):
             print("|     "),        
         print("|")
         print(hLine)
-        
+
 
 # method separate from __main()__ so this can be imported & called from a tester class
+# returns True if it succeeded in satisfying all constraints, or False if not
+# plus the total time run and the number of moves run for
 def run(numQueens, maxSteps):
     #  create queens (really this is the constraint array, because the 
     #    constraint for each `queen` in `queens` is `queen.isValid(queens) == true`)
     queens = []
     for i in range(0, numQueens):
         queens.append(Queen(i, numQueens))
+
+    start = time.time()
 
     for i in range(0, maxSteps):
         # print ("run " + str(i))
@@ -54,9 +59,10 @@ def run(numQueens, maxSteps):
             totalConflicts += queen.numConflicts(queens)
 
         if totalConflicts == 0:
-            print ("Solved in {} moves.".format(i))
-            drawboard(queens)
-            return True
+            finish = (time.time() - start)*1000
+            print ("Solved in {} moves and {:.3f} ms.".format(i, finish))
+            drawboard(queens) # won't really do anything for nQ > 25, shouldn't affect performance
+            return True, finish, i
 
         # randomly find a queen in an invalid position
         unsatisfiers = []
@@ -92,7 +98,8 @@ def run(numQueens, maxSteps):
             unsatisfier.move(originalRow)
 
     print ("No solution found. Stubborn conflicts: " + str(totalConflicts))
-    return False
+    finish = (time.time() - start)*1000
+    return False, finish, i
 
           
 
@@ -109,7 +116,7 @@ def main():
     else:
         for opt, arg in opts:
             if opt == "-n":
-                numQueens = arg
+                numQueens = int(arg)
 
     run(numQueens, maxSteps)
 
