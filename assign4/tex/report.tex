@@ -29,15 +29,51 @@ As a point of comparison between my results and others', my testing was done on 
 
 \section{Algorithm Variants}
 \subsection{Basic implementation}
-For the basic local search algorithm with \textsc{min-conflicts} as a heuristic, I obtained the results shown in \textit{Fig. 1}. 
+For the basic local search algorithm with \textsc{min-conflicts} as a heuristic, I obtained the results shown in \textit{Fig. 1}. The algorithm's performance as measured by moves shows, after a large initial jump, a roughly linear growth from 60 to 120. On the other hand, the algorithm's performance as measured by time shows an exponential increase as the size of the problem increases. A trendline plotted through these data points conformed to the equation $4.17x^{3.23}$, meaning the running time of this algorithm is roughly bound by $O(n) = 4x^4$. \\
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./base.png}
+\caption{Performance of the basic local search algorithm, in moves and time.}
+\end{figure}
+
+\newpage
+
 \subsection{Greedy implementation}
+The results of the greedy variant of this algorithm, where the queen to move rather than being picked randomly is the queen with the greatest number of conflicts, are shown in \textit{Fig. 2}. The data conform to the same general patterns shown above: a linear increase in average moves performed an a power increase in the running time.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./greedy.png}
+\caption{Performance of the greedy variant of the local search algorithm, in moves and time.}
+\end{figure}
+
+
 \subsection{Random implementation}
-In this algorithm variant, an unsatisfying queen is picked in the same way as in the basic algorithm. At this point, with some probability, instead of using the standard \textsc{min-conflicts} heuristic to find a new location for this queen, this modified algorithm instead randomly picks a location in the queen's column to place it. In my trials, I found the probability 20\% a good portion of the time to move randomly rather than heuristically; percentages higher than this resulted in the problem not being solved for a significant portion of the tests run. At 20\% random movement, the constraints failed to be satisfied after 500 tries once with 35 queens, three times with 55 queens and once with 60 queens. This represents an overall failure rate of 4.16\%, as opposed to the base algorithm and the previous variant's failure rate of 0\%. Results from this variant are shown in \textit{Fig. 3}. 
+In this algorithm variant, an unsatisfying queen is picked in the same way as in the basic algorithm. At this point, with some probability, instead of using the standard \textsc{min-conflicts} heuristic to find a new location for this queen, this modified algorithm instead randomly picks a location in the queen's column to place it. In my trials, I found the probability 20\% a good portion of the time to move randomly rather than heuristically; percentages higher than this resulted in the problem not being solved for a significant portion of the tests run. At 20\% random movement, the constraints failed to be satisfied after 500 tries once with 35 queens, three times with 55 queens and once with 60 queens. This represents an overall failure rate of 4.16\%, as opposed to the base algorithm and the previous variant's failure rate of 0\%. Results from this variant are shown in \textit{Fig. 3}.
+
+Of particular note here is that both the number of moves and the time are significantly larger than in the previous two implementations of the algorithm. Comparison between the variants will be discussed further in the next section.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./random.png}
+\caption{Performance of the local search algorithm with enhanced randomness, in moves and time.}
+\end{figure}
 
 \subsection{Comparison of above variants}
+As can be seen in \textit{Fig. 4}, the data for all three algorithm implementations considered thus far follow the same basic pattern: an average number of moves to the solution that is bounded linearly, and an average time to the solution that is bounded by a power function (likely $x^4$). However, it is obvious that one of the variants was not an improvement. At its worst ($n=45$), search with increased randomness takes more than 2.6 times as long to reach an answer as greedy search. This, combined with the fact that search with randomness was causing the failure of about 4\% of test cases (as opposed to no test cases failed in the other two variants) lead us to discard increasing randomness as an option for improving local search for this problem. This is not surprising, as this variant essentially says to do the same thing as the base algorithm would have you do, except 20\% of the time, when you should take an action that is $\frac{n-1}{n}$\% likely to be the wrong one. Randomness may help avoid plateaus and ``getting stuck," but that wasn't a problem that we were having in solving $n$-queens (partly because of the strength of our heuristic).
+
+Of the two remaining algorithm variants, greedy search appears to have the slight advantage in running time (and also moves, which I have not graphed because it is less interesting). In the three cases I will discuss next, I have used the greedier variant of local search as a base for improvement.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./compare1-3.png}
+\caption{Comparison of the first three local search algorithm variants. Search with enhanced randomness is clearly inferior.}
+\end{figure}
 
 \section{Further variation}
 \subsection{Smarter initial placement}
+
 
 \subsection{With restarts}
 
@@ -69,12 +105,6 @@ I was slightly disappointed that my implementation of the algorithm could not ge
 
 \section{Conclusion}
 
-
-%\begin{figure}[ht!]
-%\centering
-%\includegraphics[width=6.5in]{}
-%\caption{The effects on both the average number of moves and the average time when pruning is enabled, as compared to games at the %same level with pruning disabled.}
-%\end{figure}
 
 
 

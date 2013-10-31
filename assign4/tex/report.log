@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.10.18)  30 OCT 2013 21:11
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2012.10.18)  30 OCT 2013 23:13
 entering extended mode
  %&-line parsing enabled.
 **report.tex
@@ -380,32 +380,51 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 21.
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2]
-Underfull \hbox (badness 10000) in paragraph at lines 49--50
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Underfull \hbox (badness 10000) in paragraph at lines 32--33
 
  []
 
-[3] [4] (./report.aux) ) 
+<./base.png, id=13, 705.3552pt x 329.5512pt>
+File: ./base.png Graphic file (type png)
+ <use ./base.png> [2 <./base.png>]
+<./greedy.png, id=22, 705.3552pt x 330.033pt>
+File: ./greedy.png Graphic file (type png)
+ <use ./greedy.png>
+<./random.png, id=23, 705.3552pt x 330.033pt>
+File: ./random.png Graphic file (type png)
+ <use ./random.png> [3 <./greedy.png>] <./compare1-3.png, id=28, 718.3638pt x 3
+17.988pt>
+File: ./compare1-3.png Graphic file (type png)
+ <use ./compare1-3.png>
+[4 <./random.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 85--86
+
+ []
+
+[5 <./compare1-3.png>] [6] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 1878 strings out of 495061
- 23568 string characters out of 1182620
+ 1900 strings out of 495061
+ 23896 string characters out of 1182620
  81307 words of memory out of 3000000
- 5064 multiletter control sequences out of 15000+50000
+ 5081 multiletter control sequences out of 15000+50000
  8402 words of font info for 30 fonts, out of 3000000 for 9000
  28 hyphenation exceptions out of 8191
- 25i,6n,32p,1079b,210s stack positions out of 5000i,500n,10000p,200000b,50000s
-</usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
-m/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmcsc10.p
-fb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/sh
-are/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texmf-te
-xlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/
-type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1/public
-/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/c
-m/cmti10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pf
-b>
-Output written on report.pdf (4 pages, 113894 bytes).
+ 25i,6n,32p,1194b,269s stack positions out of 5000i,500n,10000p,200000b,50000s
+</usr/share/texmf-texlive/fonts/type
+1/public/amsfonts/cm/cmbx12.pfb></usr/share/texmf-texlive/fonts/type1/public/am
+sfonts/cm/cmcsc10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/
+cmmi10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmmi7.pfb><
+/usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/t
+exmf-texlive/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive
+/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texmf-texlive/fonts/type1
+/public/amsfonts/cm/cmr7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfo
+nts/cm/cmsy10.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy
+7.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr
+/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on report.pdf (6 pages, 798637 bytes).
 PDF statistics:
- 51 PDF objects out of 1000 (max. 8388607)
+ 78 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 21 words of extra memory for PDF output out of 10000 (max. 10000000)
 

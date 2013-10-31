@@ -74,32 +74,32 @@ def run(numQueens, maxSteps, interactive):
         # unsatisfier = choice(unsatisfiers)
         ### END ORIGINAL VARIANT
 
-        ### GREEDY VARIANT
-        # unsatisfiers = []
-        # worstNumConflicts = 0
-        # for queen in queens:
-        #     nC = queen.numConflicts(queens)
-        #     if nC == worstNumConflicts:
-        #         unsatisfiers.append(queen)
-        #     if nC > worstNumConflicts:
-        #         unsatisfiers = []
-        #         worstNumConflicts = nC
-        #         unsatisfiers.append(queen)
-        # unsatisfier = choice(unsatisfiers)
-        ### END GREEDY VARIANT
-
-        ### RANDOM VARIANT
-        # randomly find a queen in an invalid position
+        ## GREEDY VARIANT
         unsatisfiers = []
+        worstNumConflicts = 0
         for queen in queens:
-            if not queen.isValid(queens):
+            nC = queen.numConflicts(queens)
+            if nC == worstNumConflicts:
+                unsatisfiers.append(queen)
+            if nC > worstNumConflicts:
+                unsatisfiers = []
+                worstNumConflicts = nC
                 unsatisfiers.append(queen)
         unsatisfier = choice(unsatisfiers)
+        ## END GREEDY VARIANT
 
-        if random() <= 0.2:
-            unsatisfier.move(randint(0, numQueens))
-            continue
-        ### END RANDOM VARIANT
+        # ### RANDOM VARIANT
+        # # randomly find a queen in an invalid position
+        # unsatisfiers = []
+        # for queen in queens:
+        #     if not queen.isValid(queens):
+        #         unsatisfiers.append(queen)
+        # unsatisfier = choice(unsatisfiers)
+
+        # if random() <= 0.2:
+        #     unsatisfier.move(randint(0, numQueens))
+        #     continue
+        # ### END RANDOM VARIANT
 
         # try new locations for unsatisfier, find a set of candidate locations that has the same or less conflicts
         bestNumConflicts = numQueens

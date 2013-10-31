@@ -1,10 +1,25 @@
 from random import randint
 
 class Queen:
-    def __init__(self, column, boardSize):
-        self.row = 0
+    def __init__(self, column, boardsize):
         self.column = column
-        self.boardSize = boardSize
+        self.boardSize = boardsize
+
+        # Original code: row is always 0
+        # self.row = 0
+
+        # Improved code: rows are selected via a devisation of mine own which should give fairly low initial conflicts
+        countDown = countUp = 0
+        if column % 2 == 0:
+            self.row = countDown
+            countDown += 1
+        else:
+            self.row = self.boardSize - 1 - countUp
+            countUp += 1
+
+        # See what I'm doing? Pieces are distributed alternatingly from the top and bottom, incrementing towards the middle one at a time from each side.
+        # This sould minimize diagonal conflicts initially, and completely eliminate initial row conflicts
+
 
     def move(self, newRow):
         self.row = newRow
