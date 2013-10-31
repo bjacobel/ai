@@ -73,6 +73,23 @@ Of the two remaining algorithm variants, greedy search appears to have the sligh
 
 \section{Further variation}
 \subsection{Smarter initial placement}
+The next most obvious place to make improvements in this algorithm is choosing better initial positions. I had tried during my development phase to use both random initial rows, or to place all queens in row 0 -- both unsicentifically seemed to have about the same efficacy. One solution offered was to place each queen on the board in the position of fewest conflicts at that time. However, this seemed foolish to me for two reasons. First, from an abstract level: isn't this just the same as running the \textsc{min-conflicts} heuristic an additional $n$ times at the beginning of the program? Second, from a pragmatic level: My program's method for finding the number of conflicts depends on there being as many entries in the list of queens as there are rows and columns  on the board. Implementing this suggestion, I though, would not provide the benefits desired when the time to refactor a large part of my program was considered.
+
+I chose to implement a different approach, which does not require determining the number of conflicts for queens on an incomplete board. For each queen, I determine if the column it is placed in is even or odd. If odd, I place it in the first row; if even, in the last row. For each of the next even and odd queen, I place it in the second row, and the second-to-last row. In this way, there ought to be no initial conflicts between rows. There also ought to be very few conflicts between diagonals. An illustration of the initial step of this algorithm for $n = 8$ is below.\\
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Q0&  &  &  &  &  &  &  \\ \hline
+  &  &Q2&  &  &  &  &  \\ \hline
+  &  &  &  &Q4&  &  &  \\ \hline
+  &  &  &  &  &  &Q6&  \\ \hline    
+  &  &  &  &  &  &  &Q7\\ \hline
+  &  &  &  &  &Q5&  &  \\ \hline
+  &  &  &Q3&  &  &  &  \\ \hline
+  &Q1&  &  &  &  &  &  \\ \hline        
+\end{tabular}
+\end{center}
 
 
 \subsection{With restarts}
