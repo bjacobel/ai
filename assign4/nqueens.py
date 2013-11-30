@@ -43,7 +43,7 @@ def drawboard(queens):
 # method separate from __main()__ so this can be imported & called from a tester class
 # returns True if it succeeded in satisfying all constraints, or False if not
 # plus the total time run and the number of moves run for
-def run(numQueens, maxSteps, interactive):
+def run(numQueens, maxSteps, interactive, variant):
     #  create queens (really this is the constraint array, because the 
     #    constraint for each `queen` in `queens` is `queen.isValid(queens) == true`)
     queens = []
@@ -65,41 +65,39 @@ def run(numQueens, maxSteps, interactive):
                 drawboard(queens)
             return True, finish, i
 
-        ### ORIGINAL VARIANT
-        # randomly find a queen in an invalid position
-        # unsatisfiers = []
-        # for queen in queens:
-        #     if not queen.isValid(queens):
-        #         unsatisfiers.append(queen)
-        # unsatisfier = choice(unsatisfiers)
-        ### END ORIGINAL VARIANT
+        if variant == "original":
+            # randomly find a queen in an invalid position
+            unsatisfiers = []
+            for queen in queens:
+                if not queen.isValid(queens):
+                    unsatisfiers.append(queen)
+            unsatisfier = choice(unsatisfiers)
 
-        ## GREEDY VARIANT
-        unsatisfiers = []
-        worstNumConflicts = 0
-        for queen in queens:
-            nC = queen.numConflicts(queens)
-            if nC == worstNumConflicts:
-                unsatisfiers.append(queen)
-            if nC > worstNumConflicts:
-                unsatisfiers = []
-                worstNumConflicts = nC
-                unsatisfiers.append(queen)
-        unsatisfier = choice(unsatisfiers)
-        ## END GREEDY VARIANT
+        elif variant == "greedy":
+            unsatisfiers = []
+            worstNumConflicts = 0
+            for queen in queens:
+                nC = queen.numConflicts(queens)
+                if nC == worstNumConflicts:
+                    unsatisfiers.append(queen)
+                if nC > worstNumConflicts:
+                    unsatisfiers = []
+                    worstNumConflicts = nC
+                    unsatisfiers.append(queen)
+            unsatisfier = choice(unsatisfiers)
 
-        # ### RANDOM VARIANT
-        # # randomly find a queen in an invalid position
-        # unsatisfiers = []
-        # for queen in queens:
-        #     if not queen.isValid(queens):
-        #         unsatisfiers.append(queen)
-        # unsatisfier = choice(unsatisfiers)
+        elif variant == "random":
+            # randomly find a queen in an invalid position
+            unsatisfiers = []
+            for queen in queens:
+                if not queen.isValid(queens):
+                    unsatisfiers.append(queen)
+            unsatisfier = choice(unsatisfiers)
 
-        # if random() <= 0.2:
-        #     unsatisfier.move(randint(0, numQueens))
-        #     continue
-        # ### END RANDOM VARIANT
+            if random() <= 0.2:
+                unsatisfier.move(randint(0, numQueens))
+                continue
+        # endif
 
         # try new locations for unsatisfier, find a set of candidate locations that has the same or less conflicts
         bestNumConflicts = numQueens
@@ -138,18 +136,22 @@ def main():
     numQueens = 8
     maxSteps = 500
     interactive = True
+    variant = "original"
 
     # get commandline arguments (if running interactively)
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:")
+        opts, args = getopt.getopt(sys.argv[1:], "n:v:")
     except getopt.GetoptError:
-        print("Error in command line parameters. Continuing using {} queens.".format(numQueens))
+        print("Error in command line parameters. Acceptable options are -n and -v.")
+        exit()
     else:
         for opt, arg in opts:
             if opt == "-n":
                 numQueens = int(arg)
+            if opt == "-v":
+                variant = arg
 
-    run(numQueens, maxSteps, interactive)
+    run(numQueens, maxSteps, interactive, variant)
 
 if __name__ == "__main__":
     main()

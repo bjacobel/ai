@@ -11,7 +11,7 @@ for queens in nqueens_to_test:
     runs = []
 
     for i in range(0, trials):
-        success, time, moves = nqueens.run(queens, limit, False)
+        success, time, moves = nqueens.run(queens, limit, False, "original")
         results.append(success)
         if success:
             times.append(time)
