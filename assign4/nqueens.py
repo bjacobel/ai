@@ -51,7 +51,16 @@ def run(numQueens, maxSteps, interactive, variant):
         queens.append(Queen(i, numQueens))
 
     start = time.time()
+      
+    ### RESTARTING VARIANT
+    # originalQueens = queens
 
+    # for i in range(4):
+    #     queens = originalQueens
+    #     for i in range(maxSteps / 4):
+    # END RESTARTING VARIANT (it was an undesired change)
+
+    ### ORIGINAL VARIANT:
     for i in range(0, maxSteps):
         totalConflicts = 0
         for queen in queens:
@@ -99,6 +108,8 @@ def run(numQueens, maxSteps, interactive, variant):
                 continue
         # endif
 
+
+        ### ORIGINAL VARIANT
         # try new locations for unsatisfier, find a set of candidate locations that has the same or less conflicts
         bestNumConflicts = numQueens
         originalRow = unsatisfier.row
@@ -124,6 +135,17 @@ def run(numQueens, maxSteps, interactive, variant):
         except:
             # no new locs were generated, so leave the poor queen alone
             unsatisfier.move(originalRow)
+        ### END ORIGINAL VARIANT
+
+        ### GREEDY SHORTCUT VARIANT (the last one)
+        ## This uses the same original variant of picking an unsatisfier as on lines 78-83 above
+        # initialConflicts = unsatisfier.numConflicts(queens)
+        # for i in range(numQueens):
+        #     unsatisfier.move(i)
+        #     newConflicts = unsatisfier.numConflicts(queens)
+        #     if newConflicts < initialConflicts:
+        #         break
+        ### END GREEDY SHORTCUT
 
     print ("No solution found. Stubborn conflicts: " + str(totalConflicts))
     finish = (time.time() - start)*1000

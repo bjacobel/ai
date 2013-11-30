@@ -73,11 +73,75 @@ Of the two remaining algorithm variants, greedy search appears to have the sligh
 
 \section{Further variation}
 \subsection{Smarter initial placement}
+The next most obvious place to make improvements in this algorithm is choosing better initial positions. I had tried during my development phase to use both random initial rows, or to place all queens in row 0 -- both unscientifically seemed to have about the same efficacy. One solution offered was to place each queen on the board in the position of fewest conflicts at that time. However, this seemed foolish to me for two reasons. First, from an abstract level: isn't this just the same as running the \textsc{min-conflicts} heuristic an additional $n$ times at the beginning of the program? Second, from a pragmatic level: My program's method for finding the number of conflicts depends on there being as many entries in the list of queens as there are rows and columns  on the board. Implementing this suggestion, I though, would not provide the benefits desired when the time to refactor a large part of my program was considered.
+
+I chose to implement a different approach, which does not require determining the number of conflicts for queens on an incomplete board. For each queen, I determine if the column it is placed in is even or odd. If odd, I place it in the first row; if even, in the last row. For each of the next even and odd queen, I place it in the second row, and the second-to-last row. In this way, there ought to be no initial conflicts between rows. There also ought to be very few conflicts between diagonals. An illustration of the initial step of this algorithm for $n = 8$ is below.\\
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+Q0&  &  &  &  &  &  &  \\ \hline
+  &  &Q2&  &  &  &  &  \\ \hline
+  &  &  &  &Q4&  &  &  \\ \hline
+  &  &  &  &  &  &Q6&  \\ \hline    
+  &  &  &  &  &  &  &Q7\\ \hline
+  &  &  &  &  &Q5&  &  \\ \hline
+  &  &  &Q3&  &  &  &  \\ \hline
+  &Q1&  &  &  &  &  &  \\ \hline        
+\end{tabular}
+\end{center}
+
+As can be seen, there are only three conflicts in this initial placement: Q6 with Q7, Q6 with Q3, and Q5 with Q0. Moreover, this placement algorithm is actually more efficient than the one suggested in the assignment write-up, because it does not require running the validator on each new placement to determine the number of conflicts. It is very fast, and very good. Results using this initial placement model are shown in \textit{Fig. 5} and, in \textit{Fig. 6}, compared to results using static queen placement at row 0 for every queen. The improvements are slight, but there is a definite favor to the new initial placement method overall.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./awesome.png}
+\caption{Performance of the local search algorithm with greediness and enhanced initial placement, in moves and time.}
+\end{figure}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./awesome-compared.png}
+\caption{Performance of the local search algorithm with greediness with and without ``awesome" initial placement. Improvements are slight but but definite.}
+\end{figure}
 
 
 \subsection{With restarts}
+Because by the upper end of the problem sizes I am running in my test set, I know that the average number of trials should not exceed 125, it might be a good idea to instead of running trials all the way out to 500, to stop at 125 if a solution has not been found and do a restart. In theory this is a good idea, because restarting allows one to avoid the ``getting stuck" pitfalls: plateaus, local maxima, etc. In practice, I don't think this will actually help, because I don't actually do 500 iterations -- I do about 125 iterations, and then I quit because I found the solution. Restarting at 125 won't really help me find the solution faster, because I know the solution is somewhere near 125 moves from where I start, at a maximum. It will just force me to do more iterations. Results are shown in \textit{Fig. 7}
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width=6.5in]{./restarts.png}
+\caption{Performance of the local search algorithm with greediness and enhanced initial placement with and without cutoff restarting in moves and time.}
+\end{figure}
+
+As predicted, cutoff restarts have no benefit for the smaller sized problems, because they never reach the cutoff point. For larger problems, cutting them off before they finish simply doubles, triples or quadruples the total running time of individual cases, leading to a higher average time overall. 
+
 
 \subsection{Random movements}
+I have to admit this one confuses me. The assignment describes a algorithm variant that randomly chooses a queen that is an unsatisfier (already implemented), then scans rows until it find any new position better than the current one (in terms of number of conflicts). If it finds one, it moves there and continues with the next iteration. This makes sense; it's a very greedy variant of the algorithm which takes big shortcuts in an attempt to be fast. The next part doesn't make sense to me, though. The description of this variant continues, ``If there is no such move, move to the square with the fewest number of conflicts." If there is no move such that the given unsatisfying queen can have less conflicts, isn't it already in the best place for it to be?
+
+I've implemented this algorithm variant without the ``If there is no such move\dots" part, and it basically doesn't run, which isn't surprising. Because this variant only makes the minimum effort to find a better location for a queen in any given iteration, it would have to run for a LOT of iterations to get the same result. I upped the number of iterations to 1500 (from 500, a 200\% increase) and got the following result:
+
+\begin{center}
+\begin{tabular}{|l | l |}
+\hline
+	$n$ & Success rate \\ \hline
+	5 & 100\% \\ \hline
+	10 & 30\% \\ \hline
+	15 & 10\% \\ \hline
+	20 & 30\% \\ \hline
+	25 & 20\% \\ \hline
+	30 & 10\% \\ \hline
+	40 & 0\% \\ \hline
+	45 & futile to continue \\ \hline
+\end{tabular}
+\end{center}
+
+If I am understanding what this variant is calling for correctly, it is fairly foolish. We are doing an incomplete search of the row to find a ``better" location rather than doing a complete search to find the ``best" location, but the time this saves pales in comparison to the huge amount of time lost by having to iterate the whole algorithm three times as long -- and even then getting abysmal success rates.
+
+Since very little averaging of data was possible due to the high number of problems failed to solve, I did not think the data I gathered here was accurate enough to merit graphing.
+
 
 \section{Large values}
 My implementation of the \textsc{min-conflicts} algorithm successfully solved the $n$-queens problem for an $n$ of up to 350. Here are the n-values, moves and run times for various large values of n I tried. All tests below were done with the initial, unmodified implementation of the algorithm. Because of the times involved in obtaining the results, each was only run once.
@@ -104,6 +168,7 @@ I was slightly disappointed that my implementation of the algorithm could not ge
 \end{center}
 
 \section{Conclusion}
+The local search algorithm has several variants which can be used to augment its already fairly good performance at solving constraint problems like $n$-queens. However, several of the suggested variations did not improve the performance of the algorithm, or negatively impacted it severely. I have left the improvements that were worthwhile in my code, which is now quite successful at solving moderately-sized $n$-queens problems, although problems of significant size remain out of its reach.
 
 
 
