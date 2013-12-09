@@ -50,10 +50,13 @@ public class ValueIterationMDP {
 
     // arrays for state utilities and the current policy
     private static double[] utility = new double[NUM_STATES];
+    private static double[] utilityPrime;
     private static int[] policy = new int[NUM_STATES];
 
 
     public static void main (String[] args) {
+
+        for(int i : policy) {System.out.println(i);}
 
         discountFactor = Double.parseDouble(args[0]);
         maxStateUtilityError = Double.parseDouble(args[1]);
@@ -70,6 +73,29 @@ public class ValueIterationMDP {
         initializeMDP(T, R);
 
         int iterations = 0;
+        double maxUtilityChange;
+
+        if (solutionTechnique.equals("sv")) {
+            do {
+                maxUtilityChange = 0;
+                utilityPrime = new double[NUM_STATES];
+
+                // for each state
+                for (int i = 0; i < NUM_STATES; i++) {
+                    utilityPrime[i] = R[i] + maxStateUtilityError * policy[i];
+
+                    if (Math.abs(utilityPrime[i] - utility[i]) > maxUtilityChange)
+                        maxUtilityChange = Math.abs(utilityPrime[i] - utility[i]);
+                }
+
+                utility = utilityPrime;
+
+                iterations++;
+            } while (maxUtilityChange < maxStateUtilityError*(1-discountFactor)/discountFactor);
+        }
+        else if (solutionTechnique.equals("av")) { 
+            // asynchronous value iteration
+        }
 
         double elapsed = (System.currentTimeMillis() - start)/(double)1000;
 
