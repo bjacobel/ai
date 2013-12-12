@@ -50,11 +50,15 @@ public class ValueIterationMDP {
 
     // arrays for state utilities and the current policy
     private static double[] utility = new double[NUM_STATES];
-    private static double[] utilityPrime;
+    private static double[] utilityPrime = new double [NUM_STATES];
     private static int[] policy = new int[NUM_STATES];
 
 
     public static void main (String[] args) {
+
+        for (double d : utility){d = 0;}
+
+        for (double d : utilityPrime){d = 0;}
 
         discountFactor = Double.parseDouble(args[0]);
         maxStateUtilityError = Double.parseDouble(args[1]);
@@ -73,46 +77,67 @@ public class ValueIterationMDP {
         int iterations = 0;
         double maxUtilityChange;
 
-        if (solutionTechnique.equals("sv")) {
-            do {
-                maxUtilityChange = 0;
-                utilityPrime = new double[NUM_STATES];
+        do {
+            maxUtilityChange = 0;
+            
+            for (int i = 0; i < utility.length; i ++){
+                
+                // copy over the new utility if we're using SV
+                if (solutionTechnique.equals("sv")) {
+                    utility[i] = utilityPrime[i];
+                }
+            }          
 
-                // for each state
-                for (int i = 0; i < NUM_STATES; i++) {
-                    double maxval = 0;
-                    int bestpol = 0;
+            // for each state in s do
+            for (int i = 0; i < NUM_STATES; i++) {
+                double maxval = -99999;
+                int bestpol = 0;
 
-                    for (int j = 0; j < 4; j++) {
-                        double[] possibilities = T[i][j];
-                        double weighted_utility = 0;
+                // for each option that state has
+                for (int j = 0; j < 4; j++) {
+                    double[] possibilities = T[i][j];
+                    double weighted_utility = 0;
 
-                        for(int k = 0; k < possibilities.length; k++){
-                            weighted_utility += possibilities[k] * utility[k];
-                        }
-
-                        if (weighted_utility > maxval){
-                            maxval = weighted_utility;
-                            bestpol = j;
-                        }
+                    // find the utility of each option, weighted by its probability
+                    for(int k = 0; k < possibilities.length; k++) {
+                        weighted_utility += possibilities[k] * utility[k];
                     }
 
-                    policy[i] = bestpol; // argmax of states * transitions 
-
-                    utilityPrime[i] = R[i] + maxStateUtilityError * maxval;
-
-                    if (Math.abs(utilityPrime[i] - utility[i]) > maxUtilityChange)
-                        maxUtilityChange = Math.abs(utilityPrime[i] - utility[i]);
+                    // set the max and argmax
+                    if (weighted_utility > maxval){
+                        maxval = weighted_utility;
+                        bestpol = j;
+                    }
                 }
 
-                utility = utilityPrime;
+                // update policy array with argmax
+                policy[i] = bestpol;
 
-                iterations++;
-            } while (maxUtilityChange < maxStateUtilityError*(1-discountFactor)/discountFactor);
-        }
-        else if (solutionTechnique.equals("av")) { 
-            // asynchronous value iteration
-        }
+                if (solutionTechnique.equals("sv")) {
+                    // fill a new array if using synchronous
+                    utilityPrime[i] = R[i] + discountFactor * maxval;
+
+                    // the change in utility is |U'[i] - U[i]|
+                    if (Math.abs(utilityPrime[i] - utility[i]) > maxUtilityChange){
+                        maxUtilityChange = Math.abs(utilityPrime[i] - utility[i]);
+                    }
+
+                } else if (solutionTechnique.equals("av")) {
+                    double oldUtility = utility[i];
+                    
+                    // utility can be caluclated in-place in asynchronous
+                    utility[i] = R[i] + discountFactor * maxval;
+
+                    // now the change in utility is just |old - new|
+                    if (Math.abs(oldUtility - utility[i]) > maxUtilityChange){
+                        maxUtilityChange = Math.abs(oldUtility - utility[i]);
+                    }
+                }
+            }
+
+            iterations++;
+
+        } while (maxUtilityChange > maxStateUtilityError * (1-discountFactor) / discountFactor);
 
         double elapsed = (System.currentTimeMillis() - start)/(double)1000;
 
