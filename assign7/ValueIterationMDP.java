@@ -56,8 +56,6 @@ public class ValueIterationMDP {
 
     public static void main (String[] args) {
 
-        for(int i : policy) {System.out.println(i);}
-
         discountFactor = Double.parseDouble(args[0]);
         maxStateUtilityError = Double.parseDouble(args[1]);
         keyLossProbability = Double.parseDouble(args[2]);
@@ -82,7 +80,26 @@ public class ValueIterationMDP {
 
                 // for each state
                 for (int i = 0; i < NUM_STATES; i++) {
-                    utilityPrime[i] = R[i] + maxStateUtilityError * policy[i];
+                    double maxval = 0;
+                    int bestpol = 0;
+
+                    for (int j = 0; j < 4; j++) {
+                        double[] possibilities = T[i][j];
+                        double weighted_utility = 0;
+
+                        for(int k = 0; k < possibilities.length; k++){
+                            weighted_utility += possibilities[k] * utility[k];
+                        }
+
+                        if (weighted_utility > maxval){
+                            maxval = weighted_utility;
+                            bestpol = j;
+                        }
+                    }
+
+                    policy[i] = bestpol; // argmax of states * transitions 
+
+                    utilityPrime[i] = R[i] + maxStateUtilityError * maxval;
 
                     if (Math.abs(utilityPrime[i] - utility[i]) > maxUtilityChange)
                         maxUtilityChange = Math.abs(utilityPrime[i] - utility[i]);
