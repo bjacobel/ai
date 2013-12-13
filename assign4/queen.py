@@ -14,7 +14,7 @@ class Queen:
             else:
                 self.row = self.boardSize - 1 - countUp
                 countUp += 1
-        elif placement == "original":
+        else:
             # Original code: row is always 0
             self.row = 0
 

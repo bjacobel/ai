@@ -6,7 +6,7 @@ The code is Python, and has been tested on version 2.7.3. It should run on Pytho
 
 To run the code, enter the command
 
-	python nqueens.py -n <number-of-queens> -v <original|greedy|random> -r <smarter|restarts|firstbetter>
+	python nqueens.py -n <number-of-queens> -v <greedy|random> -r <smarter|restarts|firstbetter>
 
 If you do not specify the *-n* command line switch for the number of queens, 8 queens will be used.
 

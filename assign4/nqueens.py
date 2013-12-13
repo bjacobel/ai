@@ -52,7 +52,7 @@ def run(numQueens, maxSteps, interactive, variant, variant2):
 
     start = time.time()
 
-    if variant2 == "restarting":
+    if variant2 == "restarts":
         divisor = 4
     else:
         divisor = 1
@@ -159,9 +159,9 @@ def main():
 
     # get commandline arguments (if running interactively)
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "n:v:")
+        opts, args = getopt.getopt(sys.argv[1:], "n:v:r:")
     except getopt.GetoptError:
-        print("Error in command line parameters. Acceptable options are -n and -v.")
+        print("Error in command line parameters. Acceptable options are -n, -v and -r.")
         exit()
     else:
         for opt, arg in opts:
